@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solicitud de Citas en Línea — Hospital Regional Eleazar Guzmán Barrón</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <div class="brand">
+      <div class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" width="34" height="34">
+          <circle cx="20" cy="20" r="19" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M20 10v20M10 20h20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand__text">
+        <span class="brand__eyebrow">Hospital Regional</span>
+        <span class="brand__name">Eleazar Guzmán Barrón</span>
+      </div>
+    </div>
+    <span class="topbar__tag">Módulo de Citas SIS · Referencia</span>
+  </div>
+</header>
+
+<main class="wizard">
+
+  <section class="hero">
+    <h1>Solicita tu cita médica sin hacer cola</h1>
+    <p>Para pacientes asegurados por el <strong>SIS</strong> que ingresan mediante <strong>referencia</strong>. Verificamos tu referencia y tu seguro automáticamente, y te asignamos la especialidad y el horario que corresponde.</p>
+  </section>
+
+  <nav class="steps" aria-label="Progreso de la solicitud">
+    <ol id="stepsList">
+      <li class="step is-active" data-step="1">
+        <span class="step__dot">1</span>
+        <span class="step__label">Tus datos</span>
+      </li>
+      <li class="step" data-step="2">
+        <span class="step__dot">2</span>
+        <span class="step__label">Validación</span>
+      </li>
+      <li class="step" data-step="3">
+        <span class="step__dot">3</span>
+        <span class="step__label">Elegir cita</span>
+      </li>
+      <li class="step" data-step="4">
+        <span class="step__dot">4</span>
+        <span class="step__label">Confirmación</span>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="panel-stage">
+
+    <!-- PASO 1: FORMULARIO -->
+    <section class="panel is-visible" id="panel-1" aria-labelledby="panel1-title">
+      <h2 id="panel1-title">Ingresa tus datos</h2>
+      <p class="panel__hint">Usaremos tu DNI para completar tu nombre automáticamente y tu código de referencia para verificar tu caso con REFCON/MINSA.</p>
+
+      <form id="formDatos" novalidate>
+        <div class="field">
+          <label for="dni">DNI</label>
+          <input type="text" id="dni" name="dni" inputmode="numeric" maxlength="8" placeholder="Ej. 45231890" autocomplete="off" required>
+          <span class="field__msg" id="dniMsg"></span>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="nombres">Nombres</label>
+            <input type="text" id="nombres" name="nombres" readonly placeholder="Se completa con tu DNI">
+          </div>
+          <div class="field">
+            <label for="apellidos">Apellidos</label>
+            <input type="text" id="apellidos" name="apellidos" readonly placeholder="Se completa con tu DNI">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="referencia">Código de referencia</label>
+          <input type="text" id="referencia" name="referencia" placeholder="Ej. REF-2026-00147" autocomplete="off" required>
+          <span class="field__msg" id="refMsg"></span>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="correo">Correo electrónico</label>
+            <input type="email" id="correo" name="correo" placeholder="tucorreo@ejemplo.com" required>
+          </div>
+          <div class="field">
+            <label for="telefono">Número de teléfono</label>
+            <input type="tel" id="telefono" name="telefono" inputmode="numeric" maxlength="9" placeholder="9XXXXXXXX" required>
+          </div>
+        </div>
+
+        <details class="demo-help">
+          <summary>Datos de prueba para probar el sistema</summary>
+          <div class="demo-help__grid">
+            <div>
+              <strong>Caso aprobado</strong>
+              <p>DNI: 45231890<br>Referencia: REF-2026-00147</p>
+            </div>
+            <div>
+              <strong>Referencia observada</strong>
+              <p>DNI: 71029384<br>Referencia: REF-2026-00220</p>
+            </div>
+            <div>
+              <strong>SIS no habilitado</strong>
+              <p>DNI: 60918273<br>Referencia: REF-2026-00305</p>
+            </div>
+          </div>
+        </details>
+
+        <button type="submit" class="btn btn--primary">Verificar mi referencia y seguro</button>
+      </form>
+    </section>
+
+    <!-- PASO 2: VALIDACION -->
+    <section class="panel" id="panel-2" aria-labelledby="panel2-title">
+      <h2 id="panel2-title">Estamos validando tu solicitud</h2>
+
+      <div class="validating" id="validatingState">
+        <div class="pulse-ring" aria-hidden="true"></div>
+        <ul class="check-list">
+          <li id="checkRef"><span class="check-list__dot"></span> Consultando estado de la referencia en REFCON/MINSA…</li>
+          <li id="checkSis"><span class="check-list__dot"></span> Verificando vigencia del seguro SIS…</li>
+        </ul>
+      </div>
+
+      <div class="result-block" id="resultOk" hidden>
+        <div class="result-icon">✓</div>
+        <h3>Todo en orden</h3>
+        <p>Tu referencia está aprobada y tu seguro SIS se encuentra habilitado. Ya podemos mostrarte tu especialidad y la agenda disponible.</p>
+        <button class="btn btn--primary" id="btnContinuarPaso3">Ver especialidad y agenda</button>
+      </div>
+
+      <div class="result-block result-block--observed" id="resultFail" hidden>
+        <div class="result-icon result-icon--warn">!</div>
+        <h3>Tu solicitud quedó observada</h3>
+        <p id="resultFailReason">Motivo de la observación.</p>
+        <p class="result-block__note">Hemos enviado esta observación a tu correo electrónico. Corrige lo indicado con tu establecimiento de origen e inténtalo nuevamente.</p>
+        <button class="btn btn--secondary" id="btnReintentar">Volver a intentar</button>
+      </div>
+    </section>
+
+    <!-- PASO 3: RESUMEN + AGENDA -->
+    <section class="panel" id="panel-3" aria-labelledby="panel3-title">
+      <h2 id="panel3-title">Elige el horario de tu cita</h2>
+
+      <div class="summary-card" id="summaryCard">
+        <div class="summary-card__row">
+          <div>
+            <span class="summary-card__label">Paciente</span>
+            <span class="summary-card__value" id="sumPaciente">—</span>
+          </div>
+          <div>
+            <span class="summary-card__label">DNI</span>
+            <span class="summary-card__value" id="sumDni">—</span>
+          </div>
+        </div>
+        <div class="summary-card__row">
+          <div>
+            <span class="summary-card__label">Especialidad</span>
+            <span class="summary-card__value" id="sumEspecialidad">—</span>
+          </div>
+          <div>
+            <span class="summary-card__label">Médico asignado</span>
+            <span class="summary-card__value" id="sumMedico">—</span>
+          </div>
+        </div>
+        <div class="summary-card__row">
+          <div class="summary-card__full">
+            <span class="summary-card__label">Asunto de la consulta</span>
+            <span class="summary-card__value" id="sumAsunto">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="agenda">
+        <div class="agenda__calendar">
+          <div class="agenda__calendar-head">
+            <button type="button" class="cal-nav" id="calPrev" aria-label="Mes anterior">‹</button>
+            <span id="calMonthLabel">Mes</span>
+            <button type="button" class="cal-nav" id="calNext" aria-label="Mes siguiente">›</button>
+          </div>
+          <div class="agenda__weekdays">
+            <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div class="agenda__days" id="calDays"></div>
+        </div>
+
+        <div class="agenda__slots">
+          <h3 id="slotsTitle">Selecciona primero una fecha</h3>
+          <div class="slots-grid" id="slotsGrid"></div>
+        </div>
+      </div>
+
+      <div class="agenda__footer">
+        <span id="selectionSummary">Ningún horario seleccionado todavía.</span>
+        <button class="btn btn--primary" id="btnConfirmarCita" disabled>Confirmar cita</button>
+      </div>
+    </section>
+
+    <!-- PASO 4: CONFIRMACION -->
+    <section class="panel" id="panel-4" aria-labelledby="panel4-title">
+      <div class="confirm-head">
+        <div class="result-icon">✓</div>
+        <h2 id="panel4-title">Tu cita quedó registrada</h2>
+        <p>Hemos enviado la confirmación a tu correo electrónico y bloqueado el horario para que ningún otro paciente pueda tomarlo.</p>
+      </div>
+
+      <div class="confirm-card">
+        <div class="confirm-card__row"><span>Paciente</span><strong id="cfPaciente">—</strong></div>
+        <div class="confirm-card__row"><span>DNI</span><strong id="cfDni">—</strong></div>
+        <div class="confirm-card__row"><span>Especialidad</span><strong id="cfEspecialidad">—</strong></div>
+        <div class="confirm-card__row"><span>Médico</span><strong id="cfMedico">—</strong></div>
+        <div class="confirm-card__row"><span>Fecha</span><strong id="cfFecha">—</strong></div>
+        <div class="confirm-card__row"><span>Hora</span><strong id="cfHora">—</strong></div>
+        <div class="confirm-card__row"><span>N.º de Historia Clínica</span><strong id="cfHc">—</strong></div>
+      </div>
+
+      <div class="email-mock">
+        <div class="email-mock__head">
+          <span class="email-mock__label">Vista previa del correo enviado</span>
+        </div>
+        <div class="email-mock__body">
+          <p><strong>Para:</strong> <span id="emailTo">—</span></p>
+          <p><strong>Asunto:</strong> Confirmación de cita médica — Hospital Regional Eleazar Guzmán Barrón</p>
+          <hr>
+          <p id="emailBody">Su cita ha sido confirmada.</p>
+        </div>
+      </div>
+
+      <button class="btn btn--secondary" id="btnNuevaSolicitud">Registrar otra solicitud</button>
+    </section>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <p>Hospital Regional Eleazar Guzmán Barrón · Módulo web de solicitud de citas para pacientes SIS por referencia</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
