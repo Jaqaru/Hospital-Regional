@@ -1,0 +1,77 @@
+.admision-container {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.admision-header {
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.admision-header h2 {
+  margin: 0;
+  color: #1e293b;
+}
+
+.admision-header p {
+  margin: 4px 0 0 0;
+  color: #64748b;
+  font-size: 0.9em;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.admision-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9em;
+}
+
+.admision-table th, .admision-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admision-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+}
+
+/* Badges de estado */
+.badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.badge-pendiente { background-color: #fef3c7; color: #92400e; }
+.badge-aprobada { background-color: #dcfce7; color: #166534; }
+.badge-observada { background-color: #fee2e2; color: #991b1b; }
+
+/* Botones de acción */
+.btn-action {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.85em;
+  margin-right: 4px;
+  transition: opacity 0.2s;
+}
+
+.btn-action:hover { opacity: 0.85; }
+.btn-aprobar { background-color: #16a34a; color: white; }
+.btn-observar { background-color: #dc2626; color: white; }

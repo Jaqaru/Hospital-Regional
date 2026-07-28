@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admisión — Hospital Regional Eleazar Guzmán Barrón</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styleAdmi.css">
+</head>
+
+<body>
+    <!-- PANEL DE ADMISIÓN / AUDITORÍA -->
+    <div class="admision-container">
+        <header class="admision-header">
+            <h2>Panel de Admisión y Control — Hospital Regional</h2>
+            <p>Auditoría de pre-solicitudes web y gestión de referencias REFCON</p>
+        </header>
+
+        <div class="table-wrapper">
+            <table class="admision-table">
+                <thead>
+                    <tr>
+                        <th>ID Cita</th>
+                        <th>Paciente / DNI</th>
+                        <th>Especialidad / Médico</th>
+                        <th>Fecha y Hora</th>
+                        <th>REFCON / Cód.</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaAdmisionBody">
+                    <!-- Se llena dinámicamente con JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="admision.js"></script>
+</body>
+</html>

@@ -378,7 +378,7 @@
     renderCalendar();
   });
 
-  btnConfirmarCita.addEventListener("click", () => {
+ /* btnConfirmarCita.addEventListener("click", () => {
     // Doble verificación de bloqueo de cupo (evita cruce de horarios)
     const key = `${state.selectedDate}|${state.selectedTime}`;
     if (cuposOcupados.has(key)) {
@@ -389,7 +389,42 @@
     cuposOcupados.add(key);
     fillConfirmation();
     goToStep(4);
-  });
+  }); */
+
+  // Conexion con solicitudes de admision
+  btnConfirmarCita.addEventListener("click", () => {
+  // Doble verificación de bloqueo de cupo (evita cruce de horarios)
+  const key = `${state.selectedDate}|${state.selectedTime}`;
+  if (cuposOcupados.has(key)) {
+    alert("Este horario acaba de ser tomado por otro paciente. Por favor elige otro.");
+    renderSlots();
+    return;
+  }
+  cuposOcupados.add(key);
+
+  if (typeof solicitudesAdmision !== "undefined") {
+    solicitudesAdmision.push({
+      id: `SOL-${Math.floor(1000 + Math.random() * 9000)}`,
+      dni: state.dni,
+      paciente: `${state.nombres} ${state.apellidos}`,
+      especialidad: state.especialidad,
+      medico: state.medico,
+      fecha: state.selectedDate,
+      hora: state.selectedTime,
+      refcon: state.referenciaCodigo,
+      estado: "PENDIENTE"
+    });
+
+    // Si el panel de admisión está visible en la página, se actualiza al instante
+    if (typeof renderTablaAdmision === "function") {
+      renderTablaAdmision();
+    }
+  }
+  
+
+  fillConfirmation();
+  goToStep(4);
+});
 
   /* ============================================
      PASO 4 — CONFIRMACIÓN
