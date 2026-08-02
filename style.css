@@ -473,6 +473,7 @@ input.field--error{ border-color: var(--navy); background: var(--blue-soft); }
   flex-wrap: wrap;
 }
 #selectionSummary{ color: var(--ink-soft); font-size: 0.92rem; }
+.agenda__footer-actions{ display: flex; gap: 12px; align-items: center; }
 
 /* ============================================
    CONFIRMATION

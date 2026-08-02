@@ -72,7 +72,20 @@ function aprobarCita(index) {
   if (window.SolicitudesStore) window.SolicitudesStore.save(solicitudesAdmision);
 
   // Notificación por correo electrónico al paciente (Servicio de Correo Electrónico)
-  const cuerpo = `Estimado(a) ${cita.paciente}, su cita ha sido APROBADA. Especialidad: ${cita.especialidad}. Médico: ${cita.medico}. Fecha: ${cita.fecha}. Hora: ${cita.hora}. N.º de Historia Clínica: HC-${cita.dni}. La orden de atención ha sido generada sin costo (financiada por el SIS) y registrada en LOLCLI 9000. Preséntese con su DNI 15 minutos antes de la hora programada. Este correo es una notificación automática, por favor no responder.`;
+  const cuerpo = window.construirCuerpoCorreo
+    ? window.construirCuerpoCorreo({
+        nombreCompleto: cita.paciente,
+        introduccion: `Su cita ha sido <strong style="color:#166534;">APROBADA</strong> y no tiene ningún costo, ya que está cubierta por su seguro SIS.`,
+        filas: [
+          { label: "Especialidad", value: cita.especialidad },
+          { label: "Médico", value: cita.medico },
+          { label: "Fecha", value: cita.fecha },
+          { label: "Hora", value: cita.hora },
+          { label: "N.º de Historia Clínica", value: `HC-${cita.dni}` },
+        ],
+        notaFinal: "Preséntese con su DNI 15 minutos antes de la hora programada. Este correo es una notificación automática, por favor no responder.",
+      })
+    : `Estimado(a) ${cita.paciente}, su cita ha sido APROBADA. Especialidad: ${cita.especialidad}. Médico: ${cita.medico}. Fecha: ${cita.fecha}. Hora: ${cita.hora}. N.º de Historia Clínica: HC-${cita.dni}.`;
 
   if (typeof window.enviarCorreoSimulado === "function") {
     window.enviarCorreoSimulado(
@@ -96,7 +109,16 @@ function observarCita(index) {
     if (window.SolicitudesStore) window.SolicitudesStore.save(solicitudesAdmision);
 
     // Notificación por correo electrónico al paciente (Servicio de Correo Electrónico)
-    const cuerpo = `Estimado(a) ${cita.paciente}, su solicitud de cita (${cita.id}) ha quedado OBSERVADA por el personal de Admisión. Motivo: ${motivo} El horario que había seleccionado ha sido liberado en la agenda. Por favor gestione la corrección correspondiente con su establecimiento de origen. Este correo es una notificación automática, por favor no responder.`;
+    const cuerpo = window.construirCuerpoCorreo
+      ? window.construirCuerpoCorreo({
+          nombreCompleto: cita.paciente,
+          introduccion: `Su solicitud de cita (<strong>${cita.id}</strong>) ha quedado <strong style="color:#991b1b;">OBSERVADA</strong> por el personal de Admisión. El horario que había seleccionado ha sido liberado en la agenda.`,
+          filas: [
+            { label: "Motivo", value: motivo },
+          ],
+          notaFinal: "Por favor gestione la corrección correspondiente con su establecimiento de origen. Este correo es una notificación automática, por favor no responder.",
+        })
+      : `Estimado(a) ${cita.paciente}, su solicitud de cita (${cita.id}) ha quedado OBSERVADA. Motivo: ${motivo}`;
 
     if (typeof window.enviarCorreoSimulado === "function") {
       window.enviarCorreoSimulado(

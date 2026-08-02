@@ -161,24 +161,19 @@
           <button class="btn btn--primary" id="btnContinuarPaso3">Ver especialidad y agenda</button>
         </div>
 
+        <div class="result-block result-block--observed" id="resultDuplicate" hidden>
+          <div class="result-icon result-icon--warn">i</div>
+          <h3 id="resultDuplicateTitle">Ya tienes una solicitud registrada</h3>
+          <p id="resultDuplicateReason">Detalle de tu solicitud.</p>
+          <button class="btn btn--secondary" id="btnEntendidoDuplicado">Entendido</button>
+        </div>
+
         <div class="result-block result-block--observed" id="resultFail" hidden>
           <div class="result-icon result-icon--warn">!</div>
           <h3>Tu solicitud quedó observada</h3>
           <p id="resultFailReason">Motivo de la observación.</p>
           <p class="result-block__note">Hemos enviado esta observación a tu correo electrónico. Corrige lo indicado con
             tu establecimiento de origen e inténtalo nuevamente.</p>
-
-          <div class="email-mock">
-            <div class="email-mock__head">
-              <span class="email-mock__label">Vista previa del correo enviado</span>
-            </div>
-            <div class="email-mock__body">
-              <p><strong>Para:</strong> <span id="emailToFail">—</span></p>
-              <p><strong>Asunto:</strong> Tu solicitud de cita quedó observada</p>
-              <hr>
-              <p id="emailBodyFail">Su solicitud quedó observada.</p>
-            </div>
-          </div>
 
           <button class="btn btn--secondary" id="btnReintentar">Volver a intentar</button>
         </div>
@@ -238,7 +233,10 @@
 
         <div class="agenda__footer">
           <span id="selectionSummary">Ningún horario seleccionado todavía.</span>
-          <button class="btn btn--primary" id="btnConfirmarCita" disabled>Confirmar cita</button>
+          <div class="agenda__footer-actions">
+            <button class="btn btn--secondary" id="btnCancelarSolicitud">Cancelar</button>
+            <button class="btn btn--primary" id="btnConfirmarCita" disabled>Confirmar cita</button>
+          </div>
         </div>
       </section>
 
@@ -259,18 +257,6 @@
           <div class="confirm-card__row"><span>Fecha</span><strong id="cfFecha">—</strong></div>
           <div class="confirm-card__row"><span>Hora</span><strong id="cfHora">—</strong></div>
           <div class="confirm-card__row"><span>N.º de Historia Clínica</span><strong id="cfHc">—</strong></div>
-        </div>
-
-        <div class="email-mock">
-          <div class="email-mock__head">
-            <span class="email-mock__label">Vista previa del correo enviado</span>
-          </div>
-          <div class="email-mock__body">
-            <p><strong>Para:</strong> <span id="emailTo">—</span></p>
-            <p><strong>Asunto:</strong> Confirmación de cita médica — Hospital Regional Eleazar Guzmán Barrón</p>
-            <hr>
-            <p id="emailBody">Su cita ha sido confirmada.</p>
-          </div>
         </div>
 
         <button class="btn btn--secondary" id="btnNuevaSolicitud">Registrar otra solicitud</button>

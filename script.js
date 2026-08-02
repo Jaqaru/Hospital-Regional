@@ -106,6 +106,33 @@
   }
 
   /* ============================================
+     PLANTILLA VISUAL DEL CORREO (HTML)
+     ============================================
+     Arma el cuerpo del correo con el mismo estilo en los 4 casos
+     (registrado, observado en validación, aprobado por Admisión,
+     observado por Admisión): saludo, breve introducción, una tabla
+     con los datos clave en negrita, y una nota final. */
+  window.construirCuerpoCorreo = function ({ nombreCompleto, introduccion, filas, notaFinal }) {
+    const filasHtml = (filas || [])
+      .filter((f) => f && f.value)
+      .map(
+        (f) => `
+        <tr>
+          <td style="padding:7px 16px 7px 0; color:#64748b; font-size:13px; white-space:nowrap; vertical-align:top;">${f.label}</td>
+          <td style="padding:7px 0; color:#0B3D62; font-size:14px; font-weight:600;">${f.value}</td>
+        </tr>`
+      )
+      .join("");
+
+    return `
+      <p style="margin:0 0 14px; font-size:15px; color:#16324A;">Estimado(a) <strong>${nombreCompleto}</strong>,</p>
+      <p style="margin:0 0 18px; font-size:14px; color:#4C6B85; line-height:1.5;">${introduccion}</p>
+      ${filasHtml ? `<table role="presentation" style="width:100%; border-collapse:collapse; margin:0 0 18px; border-top:1px solid #DCEBF7; border-bottom:1px solid #DCEBF7;">${filasHtml}</table>` : ""}
+      <p style="margin:0; font-size:13px; color:#4C6B85; line-height:1.5;">${notaFinal || ""}</p>
+    `;
+  };
+
+  /* ============================================
      SERVICIO DE CORREO ELECTRÓNICO (SIMULADO)
      ============================================
      Simula el "Servicio de Correo Electrónico" del diagrama de
@@ -328,9 +355,43 @@
     state.correo = correo;
     state.telefono = telefono;
 
+    // Evita que un paciente que ya tiene una solicitud activa (pendiente o
+    // aprobada) vuelva a registrar otra, generando datos duplicados en Admisión.
+    const solicitudActiva = buscarSolicitudActivaPorDni(dni);
+    if (solicitudActiva) {
+      mostrarSolicitudDuplicada(solicitudActiva);
+      return;
+    }
+
     goToStep(2);
     runValidation();
   });
+
+  function buscarSolicitudActivaPorDni(dni) {
+    if (!window.SolicitudesStore) return null;
+    const lista = window.SolicitudesStore.load();
+    return lista.find((s) => s.dni === dni && (s.estado === "PENDIENTE" || s.estado === "APROBADA")) || null;
+  }
+
+  function mostrarSolicitudDuplicada(solicitud) {
+    const resultDuplicateTitle = document.getElementById("resultDuplicateTitle");
+    const resultDuplicateReason = document.getElementById("resultDuplicateReason");
+    const resultDuplicate = document.getElementById("resultDuplicate");
+
+    if (solicitud.estado === "APROBADA") {
+      resultDuplicateTitle.textContent = "Tu cita ya fue programada";
+      resultDuplicateReason.textContent = `Ya cuentas con una cita de ${solicitud.especialidad} con ${solicitud.medico}, programada para el ${solicitud.fecha} a las ${solicitud.hora}. Revisa tu correo electrónico para ver el detalle.`;
+    } else {
+      resultDuplicateTitle.textContent = "Tu solicitud está en evaluación";
+      resultDuplicateReason.textContent = `Ya registraste una solicitud de cita (${solicitud.id}) para ${solicitud.especialidad}, y el personal de Admisión aún la está revisando. Te notificaremos por correo electrónico en cuanto sea aprobada u observada.`;
+    }
+
+    validatingState.hidden = true;
+    resultOk.hidden = true;
+    resultFail.hidden = true;
+    resultDuplicate.hidden = false;
+    goToStep(2);
+  }
 
   /* ============================================
      PASO 2 — VALIDACIÓN SIMULADA
@@ -346,6 +407,7 @@
     validatingState.hidden = false;
     resultOk.hidden = true;
     resultFail.hidden = true;
+    document.getElementById("resultDuplicate").hidden = true;
     checkRef.classList.remove("is-done");
     checkSis.classList.remove("is-done");
 
@@ -379,19 +441,19 @@
         resultFailReason.textContent = motivo;
         resultFail.hidden = false;
 
-        const cuerpoCorreo = `Estimado(a) ${state.nombres} ${state.apellidos}, su solicitud de cita con el código de referencia ${state.referenciaCodigo} ha quedado OBSERVADA. Motivo: ${motivo} Este correo es una notificación automática, por favor no responder.`;
-        const correoEnviado = window.enviarCorreoSimulado(
+        const cuerpoCorreo = window.construirCuerpoCorreo({
+          nombreCompleto: `${state.nombres} ${state.apellidos}`,
+          introduccion: `Su solicitud de cita con el código de referencia <strong>${state.referenciaCodigo}</strong> ha quedado <strong style="color:#0B3D62;">OBSERVADA</strong>.`,
+          filas: [
+            { label: "Motivo", value: motivo },
+          ],
+          notaFinal: "Corrija lo indicado con su establecimiento de origen e inténtelo nuevamente. Este correo es una notificación automática, por favor no responder.",
+        });
+        window.enviarCorreoSimulado(
           state.correo,
           "Tu solicitud de cita quedó observada — Hospital Regional Eleazar Guzmán Barrón",
           cuerpoCorreo
         );
-
-        const emailToFail = document.getElementById("emailToFail");
-        const emailBodyFail = document.getElementById("emailBodyFail");
-        if (emailToFail && emailBodyFail) {
-          emailToFail.textContent = correoEnviado.destinatario;
-          emailBodyFail.textContent = correoEnviado.cuerpo;
-        }
       }
     }, 2000);
   }
@@ -624,26 +686,41 @@
     document.getElementById("cfHora").textContent = state.selectedTime;
     document.getElementById("cfHc").textContent = hc;
 
-    const cuerpoCorreo = `Estimado(a) ${state.nombres} ${state.apellidos}, su cita de ${state.especialidad} con ${state.medico} ha sido registrada para el ${dateLabel} a las ${state.selectedTime}, en espera de confirmación final por el personal de Admisión. Preséntese con su DNI 15 minutos antes de la hora programada. Este correo es una notificación automática, por favor no responder.`;
-    const correoEnviado = window.enviarCorreoSimulado(
+    const cuerpoCorreo = window.construirCuerpoCorreo({
+      nombreCompleto: `${state.nombres} ${state.apellidos}`,
+      introduccion: `Su cita ha sido <strong style="color:#0B3D62;">registrada</strong> y está en espera de confirmación final por el personal de Admisión.`,
+      filas: [
+        { label: "Especialidad", value: state.especialidad },
+        { label: "Médico", value: state.medico },
+        { label: "Fecha", value: dateLabel },
+        { label: "Hora", value: state.selectedTime },
+      ],
+      notaFinal: "Preséntese con su DNI 15 minutos antes de la hora programada. Este correo es una notificación automática, por favor no responder.",
+    });
+    window.enviarCorreoSimulado(
       state.correo,
       "Registro de tu solicitud de cita — Hospital Regional Eleazar Guzmán Barrón",
       cuerpoCorreo,
       true // enviarReal: el paciente debe recibir confirmación de que su solicitud fue registrada
     );
-
-    document.getElementById("emailTo").textContent = correoEnviado.destinatario;
-    document.getElementById("emailBody").textContent = correoEnviado.cuerpo;
   }
 
-  document.getElementById("btnNuevaSolicitud").addEventListener("click", () => {
+  function reiniciarFormulario() {
     document.getElementById("formDatos").reset();
+    nombresInput.value = "";
+    apellidosInput.value = "";
     dniMsg.textContent = "";
+    dniMsg.classList.remove("is-error");
     refMsg.textContent = "";
+    refMsg.classList.remove("is-error");
     state.selectedDate = null;
     state.selectedTime = null;
     state.calendarViewDate = new Date();
     goToStep(1);
-  });
+  }
+
+  document.getElementById("btnNuevaSolicitud").addEventListener("click", reiniciarFormulario);
+  document.getElementById("btnCancelarSolicitud").addEventListener("click", reiniciarFormulario);
+  document.getElementById("btnEntendidoDuplicado").addEventListener("click", reiniciarFormulario);
 
 })();
