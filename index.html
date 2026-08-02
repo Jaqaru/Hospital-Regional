@@ -10,6 +10,7 @@
     href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 
 <body>
@@ -109,16 +110,28 @@
             <summary>Datos de prueba para probar el sistema</summary>
             <div class="demo-help__grid">
               <div>
-                <strong>Caso aprobado</strong>
+                <strong>Caso aprobado (Cardiología)</strong>
                 <p>DNI: 45231890<br>Referencia: REF-2026-00147</p>
               </div>
               <div>
-                <strong>Referencia observada</strong>
+                <strong>Referencia en evaluación</strong>
                 <p>DNI: 71029384<br>Referencia: REF-2026-00220</p>
               </div>
               <div>
                 <strong>SIS no habilitado</strong>
                 <p>DNI: 60918273<br>Referencia: REF-2026-00305</p>
+              </div>
+              <div>
+                <strong>Caso aprobado (Ginecología)</strong>
+                <p>DNI: 80215467<br>Referencia: REF-2026-00410</p>
+              </div>
+              <div>
+                <strong>Referencia vencida</strong>
+                <p>DNI: 52147896<br>Referencia: REF-2026-00512</p>
+              </div>
+              <div>
+                <strong>DNI no coincide con la referencia</strong>
+                <p>DNI: 93012345<br>Referencia: REF-2026-00633</p>
               </div>
             </div>
           </details>
@@ -154,6 +167,19 @@
           <p id="resultFailReason">Motivo de la observación.</p>
           <p class="result-block__note">Hemos enviado esta observación a tu correo electrónico. Corrige lo indicado con
             tu establecimiento de origen e inténtalo nuevamente.</p>
+
+          <div class="email-mock">
+            <div class="email-mock__head">
+              <span class="email-mock__label">Vista previa del correo enviado</span>
+            </div>
+            <div class="email-mock__body">
+              <p><strong>Para:</strong> <span id="emailToFail">—</span></p>
+              <p><strong>Asunto:</strong> Tu solicitud de cita quedó observada</p>
+              <hr>
+              <p id="emailBodyFail">Su solicitud quedó observada.</p>
+            </div>
+          </div>
+
           <button class="btn btn--secondary" id="btnReintentar">Volver a intentar</button>
         </div>
       </section>

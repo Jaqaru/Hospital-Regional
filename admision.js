@@ -2,31 +2,37 @@
    MÓDULO DE ADMISIÓN (Panel de Control)
    ============================================ */
 
-// Simulación de bandeja de solicitudes que llegan desde la web del paciente
-let solicitudesAdmision = [
-  {
-    id: "SOL-101",
-    dni: "45231890",
-    paciente: "María Fernanda Torres Quiñones",
-    especialidad: "Cardiología",
-    medico: "Dr. Jorge Salinas Reyes",
-    fecha: "2026-08-05",
-    hora: "09:00",
-    refcon: "REF-2026-00147",
-    estado: "PENDIENTE"
-  },
-  {
-    id: "SOL-102",
-    dni: "71029384",
-    paciente: "Carlos Alberto Ramírez Solis",
-    especialidad: "Traumatología",
-    medico: "Dra. Ana Beltrán Rios",
-    fecha: "2026-08-06",
-    hora: "10:30",
-    refcon: "REF-2026-00220",
-    estado: "PENDIENTE"
-  }
-];
+// Las solicitudes ya no viven solo en memoria: se leen de la bandeja
+// compartida en localStorage (window.SolicitudesStore, definida en
+// script.js), que es donde el portal del paciente (index.html) las
+// escribe. Si por algún motivo script.js no se cargó, se usa un
+// arreglo local como respaldo mínimo.
+let solicitudesAdmision = window.SolicitudesStore
+  ? window.SolicitudesStore.load()
+  : [
+      {
+        id: "SOL-101",
+        dni: "45231890",
+        paciente: "María Fernanda Torres Quiñones",
+        especialidad: "Cardiología",
+        medico: "Dr. Jorge Salinas Reyes",
+        fecha: "2026-08-05",
+        hora: "09:00",
+        refcon: "REF-2026-00147",
+        estado: "PENDIENTE"
+      },
+      {
+        id: "SOL-102",
+        dni: "71029384",
+        paciente: "Carlos Alberto Ramírez Solis",
+        especialidad: "Traumatología",
+        medico: "Dra. Ana Beltrán Rios",
+        fecha: "2026-08-06",
+        hora: "10:30",
+        refcon: "REF-2026-00220",
+        estado: "PENDIENTE"
+      }
+    ];
 
 function renderTablaAdmision() {
   const tbody = document.getElementById("tablaAdmisionBody");
@@ -63,9 +69,22 @@ function renderTablaAdmision() {
 function aprobarCita(index) {
   const cita = solicitudesAdmision[index];
   cita.estado = "APROBADA";
-  
+  if (window.SolicitudesStore) window.SolicitudesStore.save(solicitudesAdmision);
+
+  // Notificación por correo electrónico al paciente (Servicio de Correo Electrónico)
+  const cuerpo = `Estimado(a) ${cita.paciente}, su cita ha sido APROBADA. Especialidad: ${cita.especialidad}. Médico: ${cita.medico}. Fecha: ${cita.fecha}. Hora: ${cita.hora}. N.º de Historia Clínica: HC-${cita.dni}. La orden de atención ha sido generada sin costo (financiada por el SIS) y registrada en LOLCLI 9000. Preséntese con su DNI 15 minutos antes de la hora programada. Este correo es una notificación automática, por favor no responder.`;
+
+  if (typeof window.enviarCorreoSimulado === "function") {
+    window.enviarCorreoSimulado(
+      cita.correo,
+      "Tu cita fue APROBADA — Hospital Regional Eleazar Guzmán Barrón",
+      cuerpo,
+      true // enviarReal: la cita recién es definitiva cuando Admisión la aprueba
+    );
+  }
+
   // Notificación visual de simulación de vinculación con LOLCLI 9000
-  alert(` Cita ${cita.id} APROBADA.\n\nSe ha generado la Historia Clínica HC-${cita.dni} en LOLCLI 9000 y se notificó al paciente.`);
+  alert(`Cita ${cita.id} APROBADA.\n\nSe ha generado la Historia Clínica HC-${cita.dni} en LOLCLI 9000 y se notificó al paciente por correo (${cita.correo || "sin correo registrado"}).`);
   renderTablaAdmision();
 }
 
@@ -74,10 +93,68 @@ function observarCita(index) {
   if (motivo) {
     const cita = solicitudesAdmision[index];
     cita.estado = "OBSERVADA";
-    alert(`Cita ${cita.id} OBSERVADA.\nMotivo: ${motivo}\n\nEl cupo de las ${cita.hora} del ${cita.fecha} ha sido liberado en la agenda.`);
+    if (window.SolicitudesStore) window.SolicitudesStore.save(solicitudesAdmision);
+
+    // Notificación por correo electrónico al paciente (Servicio de Correo Electrónico)
+    const cuerpo = `Estimado(a) ${cita.paciente}, su solicitud de cita (${cita.id}) ha quedado OBSERVADA por el personal de Admisión. Motivo: ${motivo} El horario que había seleccionado ha sido liberado en la agenda. Por favor gestione la corrección correspondiente con su establecimiento de origen. Este correo es una notificación automática, por favor no responder.`;
+
+    if (typeof window.enviarCorreoSimulado === "function") {
+      window.enviarCorreoSimulado(
+        cita.correo,
+        "Tu solicitud de cita quedó OBSERVADA — Hospital Regional Eleazar Guzmán Barrón",
+        cuerpo,
+        true // enviarReal: la decisión final (observada) también la toma Admisión
+      );
+    }
+
+    alert(`Cita ${cita.id} OBSERVADA.\nMotivo: ${motivo}\n\nEl cupo de las ${cita.hora} del ${cita.fecha} ha sido liberado en la agenda y se notificó al paciente por correo (${cita.correo || "sin correo registrado"}).`);
     renderTablaAdmision();
   }
 }
 
+/* ============================================
+   BANDEJA DE CORREOS ENVIADOS (auditoría)
+   ============================================ */
+function renderBandejaCorreos() {
+  const cont = document.getElementById("correosLogBody");
+  if (!cont) return;
+  const bandeja = window.CorreosStore ? window.CorreosStore.load() : [];
+  cont.innerHTML = "";
+
+  if (bandeja.length === 0) {
+    cont.innerHTML = `<tr><td colspan="4" style="color:#94a3b8;">Aún no se han enviado correos.</td></tr>`;
+    return;
+  }
+
+  bandeja.forEach((c) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${c.fecha}</td>
+      <td>${c.destinatario}</td>
+      <td>${c.asunto}</td>
+      <td><small style="color:#64748b;">${c.cuerpo}</small></td>
+    `;
+    cont.appendChild(tr);
+  });
+}
+
+document.addEventListener("correoEnviado", renderBandejaCorreos);
+
+// Si el paciente confirma su solicitud en OTRA pestaña (index.html) mientras
+// este panel está abierto, localStorage dispara este evento y refrescamos
+// la tabla y la bandeja de correos automáticamente.
+window.addEventListener("storage", (e) => {
+  if (window.STORAGE_KEYS && e.key === window.STORAGE_KEYS.SOLICITUDES) {
+    solicitudesAdmision = window.SolicitudesStore.load();
+    renderTablaAdmision();
+  }
+  if (window.STORAGE_KEYS && e.key === window.STORAGE_KEYS.CORREOS) {
+    renderBandejaCorreos();
+  }
+});
+
 // Inicializar tabla al cargar
-document.addEventListener("DOMContentLoaded", renderTablaAdmision);
+document.addEventListener("DOMContentLoaded", () => {
+  renderTablaAdmision();
+  renderBandejaCorreos();
+});

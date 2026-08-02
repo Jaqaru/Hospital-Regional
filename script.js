@@ -2,6 +2,23 @@
   "use strict";
 
   /* ============================================
+     CONFIGURACIÓN DE ENVÍO REAL DE CORREOS (EmailJS)
+     ============================================
+     Completa estos 3 valores con los datos de tu cuenta EmailJS
+     (Service ID, Template ID y Public Key). Mientras estén vacíos,
+     el sistema sigue funcionando en modo simulado (solo guarda el
+     correo en la bandeja/localStorage, sin enviarlo de verdad). */
+  const EMAILJS_SERVICE_ID = "service_hxa3p8a";   // ej: "service_abc1234"
+  const EMAILJS_TEMPLATE_ID = "template_voafdlo";  // ej: "template_xyz789"
+  const EMAILJS_PUBLIC_KEY = "w2yEMlU962oWP1Ecy";   // ej: "AbCdEfGhIjKlMnOp"
+
+  const EMAILJS_ACTIVO = !!(EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY);
+
+  if (EMAILJS_ACTIVO && typeof emailjs !== "undefined") {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
+
+  /* ============================================
      BASE DE DATOS SIMULADA (en memoria)
      ============================================ */
 
@@ -10,6 +27,9 @@
     "45231890": { nombres: "María Fernanda", apellidos: "Torres Quiñones" },
     "71029384": { nombres: "Carlos Alberto", apellidos: "Ramírez Solis" },
     "60918273": { nombres: "Luis Enrique", apellidos: "Vargas Peña" },
+    "80215467": { nombres: "Rosa Isabel", apellidos: "Mendoza Castro" },
+    "52147896": { nombres: "Miguel Ángel", apellidos: "Chávez Rojas" },
+    "93012345": { nombres: "Elena Patricia", apellidos: "Flores Aguilar" },
   };
 
   // Simula la respuesta de REFCON/MINSA + estado del SIS
@@ -40,6 +60,33 @@
       asunto: "Control por Medicina Interna",
       motivoObservacion: "Su seguro SIS no se encuentra habilitado. Por favor regularice su afiliación antes de continuar.",
     },
+    "REF-2026-00410": {
+      dniEsperado: "80215467",
+      estadoReferencia: "aprobada",
+      sisActivo: true,
+      especialidad: "Ginecología",
+      medico: "Dra. Carmen Ríos Salazar",
+      asunto: "Control ginecológico anual",
+    },
+    "REF-2026-00512": {
+      dniEsperado: "52147896",
+      estadoReferencia: "vencida",
+      sisActivo: true,
+      especialidad: "Neurología",
+      medico: "Dr. Iván Suárez Campos",
+      asunto: "Evaluación neurológica",
+      motivoObservacion: "Tu referencia se encuentra vencida. Debes solicitar una nueva referencia en tu establecimiento de origen.",
+    },
+    "REF-2026-00633": {
+      // Registrada a nombre de otro DNI a propósito: sirve para demostrar
+      // la validación de coincidencia entre el DNI ingresado y el titular de la referencia.
+      dniEsperado: "40112233",
+      estadoReferencia: "aprobada",
+      sisActivo: true,
+      especialidad: "Dermatología",
+      medico: "Dra. Katherine Loyola Vidal",
+      asunto: "Evaluación dermatológica",
+    },
   };
 
   // Horarios base por día (se generan para los próximos días hábiles)
@@ -57,6 +104,125 @@
     d.setDate(d.getDate() + daysAhead);
     return d.toISOString().slice(0, 10);
   }
+
+  /* ============================================
+     SERVICIO DE CORREO ELECTRÓNICO (SIMULADO)
+     ============================================
+     Simula el "Servicio de Correo Electrónico" del diagrama de
+     colaboración: cada vez que una solicitud termina (aprobada u
+     observada), se registra un correo en una bandeja compartida
+     (localStorage). admision.js reutiliza esta misma función. */
+  window.enviarCorreoSimulado = function (destinatario, asunto, cuerpo, enviarReal) {
+    const correo = {
+      destinatario: destinatario || "(correo no proporcionado)",
+      asunto,
+      cuerpo,
+      fecha: new Date().toLocaleString("es-PE"),
+      enviadoReal: false,
+    };
+    window.CorreosStore.add(correo);
+    console.log("[Servicio de Correo] Registrado para", correo.destinatario, "-", asunto);
+
+    // Envío real (solo si el llamador lo pide explícitamente, p. ej. Admisión
+    // al aprobar/observar una cita) y hay credenciales de EmailJS configuradas.
+    if (enviarReal && EMAILJS_ACTIVO && typeof emailjs !== "undefined" && destinatario) {
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: destinatario,
+        subject: asunto,
+        message: cuerpo,
+      }).then(() => {
+        console.log("[EmailJS] Correo real enviado a", destinatario);
+      }).catch((err) => {
+        console.error("[EmailJS] No se pudo enviar el correo real:", err);
+      });
+    }
+
+    // Notifica a otras partes de la MISMA página (p. ej. si el panel de Admisión
+    // estuviera embebido en la misma pestaña)
+    document.dispatchEvent(new CustomEvent("correoEnviado", { detail: correo }));
+    return correo;
+  };
+
+  /* ============================================
+     PERSISTENCIA COMPARTIDA (localStorage)
+     ============================================
+     index.html y admision.html son páginas distintas: cada una carga su
+     propio JavaScript y NO comparten variables en memoria entre sí.
+     Por eso, cuando un paciente confirmaba su cita en index.html, esa
+     solicitud nunca llegaba al panel de Admisión (que vive en otra
+     pestaña/página). Usamos localStorage, que sí persiste entre páginas
+     del mismo sitio, como bandeja compartida. */
+  const LS_SOLICITUDES = "hreg_solicitudesAdmision";
+  const LS_CORREOS = "hreg_bandejaCorreos";
+  window.STORAGE_KEYS = { SOLICITUDES: LS_SOLICITUDES, CORREOS: LS_CORREOS };
+
+  window.SolicitudesStore = {
+    seedDefault() {
+      return [
+        {
+          id: "SOL-101", dni: "45231890", paciente: "María Fernanda Torres Quiñones",
+          especialidad: "Cardiología", medico: "Dr. Jorge Salinas Reyes",
+          fecha: "2026-08-05", hora: "09:00", refcon: "REF-2026-00147",
+          correo: "maria.torres@example.com", estado: "PENDIENTE",
+        },
+        {
+          id: "SOL-102", dni: "71029384", paciente: "Carlos Alberto Ramírez Solis",
+          especialidad: "Traumatología", medico: "Dra. Ana Beltrán Rios",
+          fecha: "2026-08-06", hora: "10:30", refcon: "REF-2026-00220",
+          correo: "carlos.ramirez@example.com", estado: "PENDIENTE",
+        },
+      ];
+    },
+    load() {
+      try {
+        const raw = localStorage.getItem(LS_SOLICITUDES);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {
+        console.warn("No se pudo leer solicitudes de localStorage", e);
+      }
+      const seed = this.seedDefault();
+      this.save(seed);
+      return seed;
+    },
+    save(lista) {
+      try {
+        localStorage.setItem(LS_SOLICITUDES, JSON.stringify(lista));
+      } catch (e) {
+        console.warn("No se pudo guardar solicitudes en localStorage", e);
+      }
+    },
+    add(item) {
+      const lista = this.load();
+      lista.push(item);
+      this.save(lista);
+      return lista;
+    },
+  };
+
+  window.CorreosStore = {
+    load() {
+      try {
+        const raw = localStorage.getItem(LS_CORREOS);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.warn("No se pudo leer correos de localStorage", e);
+        return [];
+      }
+    },
+    save(lista) {
+      try {
+        localStorage.setItem(LS_CORREOS, JSON.stringify(lista));
+      } catch (e) {
+        console.warn("No se pudo guardar correos en localStorage", e);
+      }
+    },
+    add(correo) {
+      const lista = this.load();
+      lista.unshift(correo);
+      this.save(lista);
+      return lista;
+    },
+  };
 
   /* ============================================
      ESTADO DE LA SESIÓN
@@ -212,6 +378,20 @@
         }
         resultFailReason.textContent = motivo;
         resultFail.hidden = false;
+
+        const cuerpoCorreo = `Estimado(a) ${state.nombres} ${state.apellidos}, su solicitud de cita con el código de referencia ${state.referenciaCodigo} ha quedado OBSERVADA. Motivo: ${motivo} Este correo es una notificación automática, por favor no responder.`;
+        const correoEnviado = window.enviarCorreoSimulado(
+          state.correo,
+          "Tu solicitud de cita quedó observada — Hospital Regional Eleazar Guzmán Barrón",
+          cuerpoCorreo
+        );
+
+        const emailToFail = document.getElementById("emailToFail");
+        const emailBodyFail = document.getElementById("emailBodyFail");
+        if (emailToFail && emailBodyFail) {
+          emailToFail.textContent = correoEnviado.destinatario;
+          emailBodyFail.textContent = correoEnviado.cuerpo;
+        }
       }
     }, 2000);
   }
@@ -402,25 +582,25 @@
   }
   cuposOcupados.add(key);
 
-  if (typeof solicitudesAdmision !== "undefined") {
-    solicitudesAdmision.push({
-      id: `SOL-${Math.floor(1000 + Math.random() * 9000)}`,
-      dni: state.dni,
-      paciente: `${state.nombres} ${state.apellidos}`,
-      especialidad: state.especialidad,
-      medico: state.medico,
-      fecha: state.selectedDate,
-      hora: state.selectedTime,
-      refcon: state.referenciaCodigo,
-      estado: "PENDIENTE"
-    });
+  window.SolicitudesStore.add({
+    id: `SOL-${Math.floor(1000 + Math.random() * 9000)}`,
+    dni: state.dni,
+    paciente: `${state.nombres} ${state.apellidos}`,
+    especialidad: state.especialidad,
+    medico: state.medico,
+    fecha: state.selectedDate,
+    hora: state.selectedTime,
+    refcon: state.referenciaCodigo,
+    correo: state.correo,
+    estado: "PENDIENTE"
+  });
 
-    // Si el panel de admisión está visible en la página, se actualiza al instante
-    if (typeof renderTablaAdmision === "function") {
-      renderTablaAdmision();
-    }
+  // Si el panel de Admisión está abierto en la MISMA pestaña, se actualiza al instante.
+  // Si está en otra pestaña, se sincroniza solo al recargar (o vía el evento "storage").
+  if (typeof solicitudesAdmision !== "undefined" && typeof renderTablaAdmision === "function") {
+    solicitudesAdmision = window.SolicitudesStore.load();
+    renderTablaAdmision();
   }
-  
 
   fillConfirmation();
   goToStep(4);
@@ -444,9 +624,16 @@
     document.getElementById("cfHora").textContent = state.selectedTime;
     document.getElementById("cfHc").textContent = hc;
 
-    document.getElementById("emailTo").textContent = state.correo || "(correo no proporcionado)";
-    document.getElementById("emailBody").textContent =
-      `Estimado(a) ${state.nombres} ${state.apellidos}, su cita de ${state.especialidad} con ${state.medico} ha sido confirmada para el ${dateLabel} a las ${state.selectedTime}. Preséntese con su DNI 15 minutos antes de la hora programada. Este correo es una notificación automática, por favor no responder.`;
+    const cuerpoCorreo = `Estimado(a) ${state.nombres} ${state.apellidos}, su cita de ${state.especialidad} con ${state.medico} ha sido registrada para el ${dateLabel} a las ${state.selectedTime}, en espera de confirmación final por el personal de Admisión. Preséntese con su DNI 15 minutos antes de la hora programada. Este correo es una notificación automática, por favor no responder.`;
+    const correoEnviado = window.enviarCorreoSimulado(
+      state.correo,
+      "Registro de tu solicitud de cita — Hospital Regional Eleazar Guzmán Barrón",
+      cuerpoCorreo,
+      true // enviarReal: el paciente debe recibir confirmación de que su solicitud fue registrada
+    );
+
+    document.getElementById("emailTo").textContent = correoEnviado.destinatario;
+    document.getElementById("emailBody").textContent = correoEnviado.cuerpo;
   }
 
   document.getElementById("btnNuevaSolicitud").addEventListener("click", () => {

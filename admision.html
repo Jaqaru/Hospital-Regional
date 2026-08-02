@@ -10,6 +10,7 @@
         href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="styleAdmi.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 
 <body>
@@ -37,6 +38,24 @@
                     <!-- Se llena dinámicamente con JS -->
                 </tbody>
             </table>
+        </div>
+        <div class="correos-log">
+            <h3>Bandeja de correos enviados a pacientes (simulación)</h3>
+            <div class="table-wrapper">
+                <table class="admision-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Destinatario</th>
+                            <th>Asunto</th>
+                            <th>Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody id="correosLogBody">
+                        <!-- Se llena dinámicamente con JS -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

@@ -75,3 +75,16 @@
 .btn-action:hover { opacity: 0.85; }
 .btn-aprobar { background-color: #16a34a; color: white; }
 .btn-observar { background-color: #dc2626; color: white; }
+
+/* Bandeja de correos enviados */
+.correos-log {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.correos-log h3 {
+  margin: 0 0 12px 0;
+  color: #1e293b;
+  font-size: 1.05em;
+}
