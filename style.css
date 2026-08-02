@@ -530,6 +530,12 @@ input.field--error{ border-color: var(--navy); background: var(--blue-soft); }
   color: var(--ink-soft);
   font-size: 0.8rem;
 }
+.footer__staff-link{
+  color: var(--ink-soft);
+  text-decoration: underline;
+  font-size: 0.78rem;
+}
+.footer__staff-link:hover{ color: var(--blue-deep); }
 
 /* ============================================
    RESPONSIVE

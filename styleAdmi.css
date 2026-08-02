@@ -14,6 +14,20 @@
   margin-bottom: 20px;
 }
 
+.admision-header__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.admision-header__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .admision-header h2 {
   margin: 0;
   color: #1e293b;
@@ -75,6 +89,8 @@
 .btn-action:hover { opacity: 0.85; }
 .btn-aprobar { background-color: #16a34a; color: white; }
 .btn-observar { background-color: #dc2626; color: white; }
+.btn-reset { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+.btn-logout { background-color: #1e293b; color: white; }
 
 /* Bandeja de correos enviados */
 .correos-log {

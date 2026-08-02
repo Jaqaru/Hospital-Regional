@@ -162,6 +162,34 @@ function renderBandejaCorreos() {
 
 document.addEventListener("correoEnviado", renderBandejaCorreos);
 
+// Cerrar sesión: borra la marca de login y regresa a la pantalla de acceso.
+document.getElementById("btnCerrarSesion").addEventListener("click", () => {
+  sessionStorage.removeItem("isLogged");
+  window.location.href = "login_intranet.html";
+});
+
+// Limpiar datos de prueba: borra las solicitudes y correos guardados en
+// localStorage y vuelve a dejar los 2 pacientes de ejemplo originales.
+// Útil mientras se hacen pruebas repetidas para evitar datos duplicados.
+document.getElementById("btnLimpiarDatos").addEventListener("click", () => {
+  const confirmar = confirm(
+    "Esto borrará TODAS las solicitudes y correos guardados (incluyendo los reales que hayan llegado a un correo) y dejará solo los 2 pacientes de ejemplo. ¿Deseas continuar?"
+  );
+  if (!confirmar) return;
+
+  if (window.SolicitudesStore) {
+    window.SolicitudesStore.save(window.SolicitudesStore.seedDefault());
+    solicitudesAdmision = window.SolicitudesStore.load();
+  }
+  if (window.CorreosStore) {
+    window.CorreosStore.save([]);
+  }
+
+  renderTablaAdmision();
+  renderBandejaCorreos();
+  alert("Datos de prueba reiniciados.");
+});
+
 // Si el paciente confirma su solicitud en OTRA pestaña (index.html) mientras
 // este panel está abierto, localStorage dispara este evento y refrescamos
 // la tabla y la bandeja de correos automáticamente.

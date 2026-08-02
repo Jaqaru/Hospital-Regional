@@ -14,11 +14,27 @@
 </head>
 
 <body>
+    <script>
+        // Candado de acceso: si no inició sesión en login_intranet.html, no puede
+        // ver este panel. Se ejecuta antes de pintar cualquier contenido.
+        if (sessionStorage.getItem("isLogged") !== "true") {
+            window.location.href = "login_intranet.html";
+        }
+    </script>
+
     <!-- PANEL DE ADMISIÓN / AUDITORÍA -->
     <div class="admision-container">
         <header class="admision-header">
-            <h2>Panel de Admisión y Control — Hospital Regional</h2>
-            <p>Auditoría de pre-solicitudes web y gestión de referencias REFCON</p>
+            <div class="admision-header__row">
+                <div>
+                    <h2>Panel de Admisión y Control — Hospital Regional</h2>
+                    <p>Auditoría de pre-solicitudes web y gestión de referencias REFCON</p>
+                </div>
+                <div class="admision-header__actions">
+                    <button class="btn-action btn-reset" id="btnLimpiarDatos" type="button">Limpiar datos de prueba</button>
+                    <button class="btn-action btn-logout" id="btnCerrarSesion" type="button">Cerrar sesión</button>
+                </div>
+            </div>
         </header>
 
         <div class="table-wrapper">
