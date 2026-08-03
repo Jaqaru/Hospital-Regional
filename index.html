@@ -249,14 +249,21 @@
             pueda tomarlo.</p>
         </div>
 
-        <div class="confirm-card">
-          <div class="confirm-card__row"><span>Paciente</span><strong id="cfPaciente">—</strong></div>
-          <div class="confirm-card__row"><span>DNI</span><strong id="cfDni">—</strong></div>
-          <div class="confirm-card__row"><span>Especialidad</span><strong id="cfEspecialidad">—</strong></div>
-          <div class="confirm-card__row"><span>Médico</span><strong id="cfMedico">—</strong></div>
-          <div class="confirm-card__row"><span>Fecha</span><strong id="cfFecha">—</strong></div>
-          <div class="confirm-card__row"><span>Hora</span><strong id="cfHora">—</strong></div>
-          <div class="confirm-card__row"><span>N.º de Historia Clínica</span><strong id="cfHc">—</strong></div>
+        <div class="confirm-card confirm-card--ticket">
+          <div class="ticket__head">
+            <span class="ticket__brand">Hospital Regional Eleazar Guzmán Barrón</span>
+            <span class="ticket__label">Comprobante de cita</span>
+          </div>
+          <div class="ticket__perforation" aria-hidden="true"></div>
+          <div class="ticket__body">
+            <div class="confirm-card__row"><span>Paciente</span><strong id="cfPaciente">—</strong></div>
+            <div class="confirm-card__row"><span>DNI</span><strong id="cfDni">—</strong></div>
+            <div class="confirm-card__row"><span>Especialidad</span><strong id="cfEspecialidad">—</strong></div>
+            <div class="confirm-card__row"><span>Médico</span><strong id="cfMedico">—</strong></div>
+            <div class="confirm-card__row"><span>Fecha</span><strong id="cfFecha">—</strong></div>
+            <div class="confirm-card__row"><span>Hora</span><strong id="cfHora">—</strong></div>
+            <div class="confirm-card__row confirm-card__row--hc"><span>N.º de Historia Clínica</span><strong id="cfHc">—</strong></div>
+          </div>
         </div>
 
         <button class="btn btn--secondary" id="btnNuevaSolicitud">Registrar otra solicitud</button>

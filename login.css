@@ -1,96 +1,175 @@
+/* ============================================
+   TOKENS (alineados con style.css del sitio principal)
+   ============================================ */
+:root{
+  --navy:        #0B3D62;
+  --blue-deep:   #0F4C81;
+  --blue:        #1565A8;
+  --blue-mid:    #4A8FC2;
+  --blue-soft:   #DCEBF7;
+  --blue-wash:   #F1F7FC;
+  --white:       #FFFFFF;
+  --ink:         #16324A;
+  --ink-soft:    #4C6B85;
+  --line:        #CBDEEE;
+
+  --font-display: "Lora", Georgia, serif;
+  --font-body: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --shadow-card: 0 20px 45px -20px rgba(11, 61, 98, 0.45);
+}
+
+*, *::before, *::after{ box-sizing: border-box; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: #f1f5f9;
+  font-family: var(--font-body);
+  color: var(--ink);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  overflow: hidden;
+
+  /* Fondo degradado animado */
+  background: linear-gradient(135deg, var(--navy), var(--blue-deep), var(--blue), var(--blue-deep));
+  background-size: 300% 300%;
+  animation: gradientShift 12s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .login-wrapper {
   width: 100%;
   max-width: 400px;
   padding: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .login-box {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  border-top: 4px solid #0284c7; /* Azul institucional */
+  background: var(--white);
+  padding: 36px 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border-top: 4px solid var(--blue-mid);
+  animation: cardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 26px;
 }
 
 .login-header h2 {
   margin: 0;
-  color: #0f172a;
+  font-family: var(--font-display);
+  color: var(--navy);
+  font-size: 1.4rem;
+  animation: iconFloat 3.2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
 }
 
 .login-header p {
-  color: #64748b;
-  font-size: 0.9em;
-  margin-top: 5px;
+  color: var(--ink-soft);
+  font-size: 0.88em;
+  margin-top: 6px;
 }
 
 .input-group {
-  margin-bottom: 15px;
+  margin-bottom: 16px;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
-  color: #334155;
-  font-size: 0.9em;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 0.85em;
 }
 
 .input-group input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
   box-sizing: border-box;
   font-size: 1em;
+  font-family: var(--font-body);
+  color: var(--ink);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-group input:focus {
   outline: none;
-  border-color: #0284c7;
-  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px var(--blue-soft);
 }
 
 .btn-login {
   width: 100%;
-  padding: 12px;
-  background-color: #0284c7;
-  color: white;
+  padding: 13px;
+  background: linear-gradient(120deg, var(--blue-deep), var(--blue));
+  background-size: 200% auto;
+  color: var(--white);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 1em;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 10px;
-  transition: background 0.3s;
+  margin-top: 6px;
+  transition: background-position 0.4s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 22px -12px rgba(15, 76, 129, 0.55);
 }
 
 .btn-login:hover {
-  background-color: #0369a1;
+  background-position: right center;
+  transform: translateY(-1px);
+}
+
+.btn-login:active {
+  transform: translateY(0);
 }
 
 .msg-error {
-  color: #dc2626;
-  background-color: #fee2e2;
+  color: #7A1F2B;
+  background-color: #FBE4E4;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-size: 0.85em;
   text-align: center;
   margin-bottom: 15px;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
 }
 
 .login-footer {
@@ -100,10 +179,12 @@ body {
 }
 
 .login-footer a {
-  color: #64748b;
+  color: var(--ink-soft);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .login-footer a:hover {
+  color: var(--blue-deep);
   text-decoration: underline;
 }
