@@ -28,11 +28,22 @@ html{ scroll-behavior: smooth; }
 
 body{
   margin: 0;
-  background: var(--blue-wash);
   color: var(--ink);
   font-family: var(--font-body);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+
+  /* Fondo degradado animado, mismo estilo que login y admisión */
+  background: linear-gradient(135deg, var(--blue-wash), var(--blue-soft), var(--blue-mid), var(--blue-wash));
+  background-size: 300% 300%;
+  animation: gradientShift 18s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 h1, h2, h3{
@@ -498,6 +509,60 @@ input.field--error{ border-color: var(--navy); background: var(--blue-soft); }
 .confirm-card__row:last-child{ border-bottom: none; }
 .confirm-card__row span{ color: var(--ink-soft); }
 .confirm-card__row strong{ color: var(--navy); }
+
+/* Comprobante tipo ticket / boarding pass */
+.confirm-card--ticket{
+  background: var(--white);
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  animation: panelIn 0.4s ease;
+}
+.ticket__head{
+  background: linear-gradient(120deg, var(--navy), var(--blue-deep));
+  color: var(--white);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ticket__brand{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.ticket__label{
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(255,255,255,0.16);
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.ticket__perforation{
+  height: 0;
+  border-top: 2px dashed var(--line);
+  margin: 0 24px;
+}
+.ticket__body{
+  padding: 6px 24px 8px;
+}
+.ticket__body .confirm-card__row{ padding: 12px 0; }
+.confirm-card__row--hc{
+  background: var(--blue-wash);
+  margin: 8px -24px -8px;
+  padding: 16px 24px !important;
+  border-bottom: none;
+}
+.confirm-card__row--hc strong{
+  font-family: "Courier New", monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: var(--blue-deep);
+}
 
 .email-mock{
   border: 1px solid var(--line);
