@@ -10,6 +10,7 @@
     href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="chatbot.css">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 
@@ -26,7 +27,6 @@
           <span class="brand__name">Eleazar Guzmán Barrón</span>
         </div>
       </div>
-      <span class="topbar__tag">Módulo de Citas SIS · Referencia</span>
     </div>
   </header>
 
@@ -277,7 +277,31 @@
     <p><a href="login_intranet.html" class="footer__staff-link">Acceso para personal de Admisión</a></p>
   </footer>
 
+  <!-- Widget de chat de ayuda -->
+  <button type="button" id="chatToggleBtn" class="chat-toggle" aria-label="Abrir chat de ayuda">
+    <span class="chat-toggle__icon-open">💬</span>
+    <span class="chat-toggle__icon-close">✕</span>
+  </button>
+
+  <div id="chatPanel" class="chat-panel" role="dialog" aria-label="Asistente virtual">
+    <div class="chat-panel__header">
+      <span class="chat-panel__avatar">🏥</span>
+      <span class="chat-panel__title">
+        <strong>Asistente Hospital Regional</strong>
+        <span>Resuelve dudas sobre tu cita</span>
+      </span>
+      <button type="button" id="chatCloseBtn" class="chat-panel__close" aria-label="Cerrar chat">✕</button>
+    </div>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div id="chatChips" class="chat-chips"></div>
+    <form id="chatForm" class="chat-form">
+      <input type="text" id="chatInput" placeholder="Escribe tu pregunta…" autocomplete="off">
+      <button type="submit" aria-label="Enviar">➤</button>
+    </form>
+  </div>
+
   <script src="script.js"></script>
+  <script src="chatbot.js"></script>
 </body>
 
 </html>
