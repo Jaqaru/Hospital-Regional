@@ -1,69 +1,16 @@
-/* ============================================
-   TOKENS (alineados con style.css del sitio principal)
-   ============================================ */
-:root{
-  --navy:        #0B3D62;
-  --blue-deep:   #0F4C81;
-  --blue:        #1565A8;
-  --blue-mid:    #4A8FC2;
-  --blue-soft:   #DCEBF7;
-  --blue-wash:   #F1F7FC;
-  --white:       #FFFFFF;
-  --ink:         #16324A;
-  --ink-soft:    #4C6B85;
-  --line:        #CBDEEE;
-
-  --font-display: "Lora", Georgia, serif;
-  --font-body: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
-
-  --shadow-card: 0 12px 32px -18px rgba(11, 61, 98, 0.35);
-}
-
-*, *::before, *::after{ box-sizing: border-box; }
-
-@media (prefers-reduced-motion: reduce){
-  *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
-}
-
-body{
-  margin: 0;
-  font-family: var(--font-body);
-  min-height: 100vh;
-
-  /* Fondo degradado animado, igual espíritu que el login */
-  background: linear-gradient(135deg, var(--blue-wash), var(--blue-soft), var(--blue-mid), var(--blue-wash));
-  background-size: 300% 300%;
-  animation: gradientShift 16s ease infinite;
-}
-
-@keyframes gradientShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
 .admision-container {
-  width: min(96vw, 1600px);
-  margin: 32px auto;
-  padding: 32px clamp(20px, 3vw, 44px);
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-  animation: panelIn 0.4s ease;
-}
-
-@keyframes panelIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 .admision-header {
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 16px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 12px;
   margin-bottom: 20px;
 }
 
@@ -83,73 +30,17 @@ body{
 
 .admision-header h2 {
   margin: 0;
-  font-family: var(--font-display);
-  color: var(--navy);
+  color: #1e293b;
 }
 
 .admision-header p {
   margin: 4px 0 0 0;
-  color: var(--ink-soft);
+  color: #64748b;
   font-size: 0.9em;
-}
-
-/* Tarjetas de estadísticas */
-.stat-cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-.stat-card {
-  background: var(--blue-wash);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  border-left: 4px solid var(--blue-mid);
-  animation: rowIn 0.35s ease backwards;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px -16px rgba(11, 61, 98, 0.4);
-}
-
-.stat-card__label {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--blue);
-  font-weight: 700;
-}
-
-.stat-card__value {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--navy);
-}
-
-.stat-card--total     { border-left-color: var(--navy); }
-.stat-card--pendiente { border-left-color: #B45309; }
-.stat-card--aprobada  { border-left-color: #16A34A; }
-.stat-card--observada { border-left-color: #B91C2C; }
-
-@media (max-width: 900px){
-  .stat-cards{ grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 480px){
-  .stat-cards{ grid-template-columns: 1fr; }
 }
 
 .table-wrapper {
   overflow-x: auto;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
 }
 
 .admision-table {
@@ -160,221 +51,56 @@ body{
 }
 
 .admision-table th, .admision-table td {
-  padding: 13px 14px;
-  border-bottom: 1px solid var(--line);
-}
-
-.admision-table td:last-child {
-  white-space: nowrap;
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .admision-table th {
-  background-color: var(--blue-wash);
-  color: var(--navy);
-  font-weight: 700;
-  font-size: 0.78em;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.admision-table tbody tr {
-  transition: background-color 0.15s ease;
-  animation: rowIn 0.3s ease backwards;
-}
-
-.admision-table tbody tr:hover {
-  background-color: var(--blue-wash);
-}
-
-.admision-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-@keyframes rowIn {
-  from { opacity: 0; transform: translateX(-6px); }
-  to   { opacity: 1; transform: translateX(0); }
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
 }
 
 /* Badges de estado */
 .badge {
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-size: 0.78em;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: bold;
   display: inline-block;
 }
 
-.badge-pendiente { background-color: #FEF3C7; color: #92400E; }
-.badge-aprobada  { background-color: #DCFCE7; color: #166534; }
-.badge-observada { background-color: #FBE4E4; color: #7A1F2B; }
+.badge-pendiente { background-color: #fef3c7; color: #92400e; }
+.badge-aprobada { background-color: #dcfce7; color: #166534; }
+.badge-observada { background-color: #fee2e2; color: #991b1b; }
 
 /* Botones de acción */
 .btn-action {
-  padding: 7px 14px;
+  padding: 6px 12px;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.85em;
   margin-right: 4px;
-  font-family: var(--font-body);
-  transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  transition: opacity 0.2s;
 }
 
-.btn-action:hover { transform: translateY(-1px); opacity: 0.92; }
-.btn-action:active { transform: translateY(0); }
-
-.btn-aprobar {
-  background-color: #16A34A;
-  color: var(--white);
-  box-shadow: 0 8px 18px -10px rgba(22, 163, 74, 0.55);
-}
-.btn-observar {
-  background-color: #B91C2C;
-  color: var(--white);
-  box-shadow: 0 8px 18px -10px rgba(185, 28, 44, 0.5);
-}
-.btn-reset {
-  background-color: var(--white);
-  color: var(--blue-deep);
-  border: 1.5px solid var(--blue-deep);
-}
-.btn-reset:hover { background-color: var(--blue-wash); }
-.btn-logout {
-  background-color: var(--navy);
-  color: var(--white);
-}
+.btn-action:hover { opacity: 0.85; }
+.btn-aprobar { background-color: #16a34a; color: white; }
+.btn-observar { background-color: #dc2626; color: white; }
+.btn-reset { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+.btn-logout { background-color: #1e293b; color: white; }
 
 /* Bandeja de correos enviados */
 .correos-log {
-  margin-top: 36px;
-  padding-top: 22px;
-  border-top: 1px solid var(--line);
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 2px solid #e2e8f0;
 }
 
 .correos-log h3 {
-  margin: 0 0 14px 0;
-  font-family: var(--font-display);
-  color: var(--navy);
-  font-size: 1.1em;
-}
-
-.email-empty {
-  color: var(--ink-soft);
-  font-size: 0.9em;
-  padding: 16px;
-  background: var(--blue-wash);
-  border-radius: var(--radius-sm);
-  text-align: center;
-}
-
-.email-inbox {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.email-card {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--white);
-  overflow: hidden;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
-  animation: rowIn 0.3s ease backwards;
-}
-
-.email-card:hover {
-  border-color: var(--blue-mid);
-  box-shadow: 0 8px 20px -14px rgba(11, 61, 98, 0.35);
-}
-
-.email-card__head {
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px 16px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  font-family: var(--font-body);
-}
-
-.email-card__avatar {
-  flex: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid));
-  color: var(--white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-family: var(--font-display);
-}
-
-.email-card__headtext {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.email-card__line1 {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.email-card__from {
-  font-weight: 700;
-  color: var(--navy);
-  font-size: 0.92em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.email-card__date {
-  flex: none;
-  font-size: 0.78em;
-  color: var(--ink-soft);
-}
-
-.email-card__subject {
-  font-weight: 600;
-  color: var(--ink);
-  font-size: 0.9em;
-}
-
-.email-card__to {
-  font-size: 0.8em;
-  color: var(--ink-soft);
-}
-
-.email-card__body {
-  max-height: 0;
-  overflow: hidden;
-  padding: 0 20px;
-  transition: max-height 0.35s ease, padding 0.35s ease;
-  border-top: 1px solid transparent;
-}
-
-.email-card.is-open .email-card__body {
-  max-height: 600px;
-  padding: 4px 20px 20px;
-  border-top: 1px solid var(--line);
-}
-
-/* Responsive */
-@media (max-width: 720px){
-  .admision-container{ margin: 16px; padding: 20px; }
-  .admision-header__row{ flex-direction: column; }
-  .admision-header__actions{ width: 100%; }
-  .btn-action{ margin-bottom: 4px; }
+  margin: 0 0 12px 0;
+  color: #1e293b;
+  font-size: 1.05em;
 }

@@ -10,7 +10,6 @@
     href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="chatbot.css">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 
@@ -27,6 +26,7 @@
           <span class="brand__name">Eleazar Guzmán Barrón</span>
         </div>
       </div>
+      <span class="topbar__tag">Módulo de Citas SIS · Referencia</span>
     </div>
   </header>
 
@@ -249,21 +249,14 @@
             pueda tomarlo.</p>
         </div>
 
-        <div class="confirm-card confirm-card--ticket">
-          <div class="ticket__head">
-            <span class="ticket__brand">Hospital Regional Eleazar Guzmán Barrón</span>
-            <span class="ticket__label">Comprobante de cita</span>
-          </div>
-          <div class="ticket__perforation" aria-hidden="true"></div>
-          <div class="ticket__body">
-            <div class="confirm-card__row"><span>Paciente</span><strong id="cfPaciente">—</strong></div>
-            <div class="confirm-card__row"><span>DNI</span><strong id="cfDni">—</strong></div>
-            <div class="confirm-card__row"><span>Especialidad</span><strong id="cfEspecialidad">—</strong></div>
-            <div class="confirm-card__row"><span>Médico</span><strong id="cfMedico">—</strong></div>
-            <div class="confirm-card__row"><span>Fecha</span><strong id="cfFecha">—</strong></div>
-            <div class="confirm-card__row"><span>Hora</span><strong id="cfHora">—</strong></div>
-            <div class="confirm-card__row confirm-card__row--hc"><span>N.º de Historia Clínica</span><strong id="cfHc">—</strong></div>
-          </div>
+        <div class="confirm-card">
+          <div class="confirm-card__row"><span>Paciente</span><strong id="cfPaciente">—</strong></div>
+          <div class="confirm-card__row"><span>DNI</span><strong id="cfDni">—</strong></div>
+          <div class="confirm-card__row"><span>Especialidad</span><strong id="cfEspecialidad">—</strong></div>
+          <div class="confirm-card__row"><span>Médico</span><strong id="cfMedico">—</strong></div>
+          <div class="confirm-card__row"><span>Fecha</span><strong id="cfFecha">—</strong></div>
+          <div class="confirm-card__row"><span>Hora</span><strong id="cfHora">—</strong></div>
+          <div class="confirm-card__row"><span>N.º de Historia Clínica</span><strong id="cfHc">—</strong></div>
         </div>
 
         <button class="btn btn--secondary" id="btnNuevaSolicitud">Registrar otra solicitud</button>
@@ -277,31 +270,7 @@
     <p><a href="login_intranet.html" class="footer__staff-link">Acceso para personal de Admisión</a></p>
   </footer>
 
-  <!-- Widget de chat de ayuda -->
-  <button type="button" id="chatToggleBtn" class="chat-toggle" aria-label="Abrir chat de ayuda">
-    <span class="chat-toggle__icon-open">💬</span>
-    <span class="chat-toggle__icon-close">✕</span>
-  </button>
-
-  <div id="chatPanel" class="chat-panel" role="dialog" aria-label="Asistente virtual">
-    <div class="chat-panel__header">
-      <span class="chat-panel__avatar">🏥</span>
-      <span class="chat-panel__title">
-        <strong>Asistente Hospital Regional</strong>
-        <span>Resuelve dudas sobre tu cita</span>
-      </span>
-      <button type="button" id="chatCloseBtn" class="chat-panel__close" aria-label="Cerrar chat">✕</button>
-    </div>
-    <div id="chatMessages" class="chat-messages"></div>
-    <div id="chatChips" class="chat-chips"></div>
-    <form id="chatForm" class="chat-form">
-      <input type="text" id="chatInput" placeholder="Escribe tu pregunta…" autocomplete="off">
-      <button type="submit" aria-label="Enviar">➤</button>
-    </form>
-  </div>
-
   <script src="script.js"></script>
-  <script src="chatbot.js"></script>
 </body>
 
 </html>

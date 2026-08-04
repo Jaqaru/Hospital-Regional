@@ -34,24 +34,6 @@ let solicitudesAdmision = window.SolicitudesStore
       }
     ];
 
-function renderStats() {
-  const total = solicitudesAdmision.length;
-  const pendientes = solicitudesAdmision.filter((s) => s.estado === "PENDIENTE").length;
-  const aprobadas = solicitudesAdmision.filter((s) => s.estado === "APROBADA").length;
-  const observadas = solicitudesAdmision.filter((s) => s.estado === "OBSERVADA").length;
-
-  const setValor = (id, valor) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = valor;
-  };
-
-  setValor("statTotal", total);
-  setValor("statPendientes", pendientes);
-  setValor("statAprobadas", aprobadas);
-  setValor("statObservadas", observadas);
-}
-
 function renderTablaAdmision() {
   const tbody = document.getElementById("tablaAdmisionBody");
   if (!tbody) return;
@@ -117,7 +99,6 @@ function aprobarCita(index) {
   // Notificación visual de simulación de vinculación con LOLCLI 9000
   alert(`Cita ${cita.id} APROBADA.\n\nSe ha generado la Historia Clínica HC-${cita.dni} en LOLCLI 9000 y se notificó al paciente por correo (${cita.correo || "sin correo registrado"}).`);
   renderTablaAdmision();
-  renderStats();
 }
 
 function observarCita(index) {
@@ -150,7 +131,6 @@ function observarCita(index) {
 
     alert(`Cita ${cita.id} OBSERVADA.\nMotivo: ${motivo}\n\nEl cupo de las ${cita.hora} del ${cita.fecha} ha sido liberado en la agenda y se notificó al paciente por correo (${cita.correo || "sin correo registrado"}).`);
     renderTablaAdmision();
-    renderStats();
   }
 }
 
@@ -164,37 +144,20 @@ function renderBandejaCorreos() {
   cont.innerHTML = "";
 
   if (bandeja.length === 0) {
-    cont.innerHTML = `<p class="email-empty">Aún no se han enviado correos.</p>`;
+    cont.innerHTML = `<tr><td colspan="4" style="color:#94a3b8;">Aún no se han enviado correos.</td></tr>`;
     return;
   }
 
-  // Más recientes primero
-  [...bandeja].reverse().forEach((c) => {
-    const inicial = (c.destinatario || "?").trim().charAt(0).toUpperCase();
-    const card = document.createElement("article");
-    card.className = "email-card";
-    card.innerHTML = `
-      <button type="button" class="email-card__head">
-        <span class="email-card__avatar">${inicial}</span>
-        <span class="email-card__headtext">
-          <span class="email-card__line1">
-            <span class="email-card__from">Hospital Regional Eleazar Guzmán Barrón</span>
-            <span class="email-card__date">${c.fecha}</span>
-          </span>
-          <span class="email-card__subject">${c.asunto}</span>
-          <span class="email-card__to">Para: ${c.destinatario}</span>
-        </span>
-      </button>
-      <div class="email-card__body">${c.cuerpo}</div>
+  bandeja.forEach((c) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${c.fecha}</td>
+      <td>${c.destinatario}</td>
+      <td>${c.asunto}</td>
+      <td><small style="color:#64748b;">${c.cuerpo}</small></td>
     `;
-    const headBtn = card.querySelector(".email-card__head");
-    headBtn.addEventListener("click", () => card.classList.toggle("is-open"));
-    cont.appendChild(card);
+    cont.appendChild(tr);
   });
-
-  // La más reciente arranca expandida
-  const primera = cont.querySelector(".email-card");
-  if (primera) primera.classList.add("is-open");
 }
 
 document.addEventListener("correoEnviado", renderBandejaCorreos);
@@ -224,7 +187,6 @@ document.getElementById("btnLimpiarDatos").addEventListener("click", () => {
 
   renderTablaAdmision();
   renderBandejaCorreos();
-  renderStats();
   alert("Datos de prueba reiniciados.");
 });
 
@@ -235,7 +197,6 @@ window.addEventListener("storage", (e) => {
   if (window.STORAGE_KEYS && e.key === window.STORAGE_KEYS.SOLICITUDES) {
     solicitudesAdmision = window.SolicitudesStore.load();
     renderTablaAdmision();
-    renderStats();
   }
   if (window.STORAGE_KEYS && e.key === window.STORAGE_KEYS.CORREOS) {
     renderBandejaCorreos();
@@ -246,5 +207,4 @@ window.addEventListener("storage", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
   renderTablaAdmision();
   renderBandejaCorreos();
-  renderStats();
 });
