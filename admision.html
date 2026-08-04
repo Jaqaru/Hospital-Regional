@@ -37,6 +37,25 @@
             </div>
         </header>
 
+        <div class="stat-cards" id="statCards">
+            <div class="stat-card stat-card--total">
+                <span class="stat-card__label">Total de citas</span>
+                <span class="stat-card__value" id="statTotal">0</span>
+            </div>
+            <div class="stat-card stat-card--pendiente">
+                <span class="stat-card__label">Pendientes</span>
+                <span class="stat-card__value" id="statPendientes">0</span>
+            </div>
+            <div class="stat-card stat-card--aprobada">
+                <span class="stat-card__label">Aprobadas</span>
+                <span class="stat-card__value" id="statAprobadas">0</span>
+            </div>
+            <div class="stat-card stat-card--observada">
+                <span class="stat-card__label">Observadas</span>
+                <span class="stat-card__value" id="statObservadas">0</span>
+            </div>
+        </div>
+
         <div class="table-wrapper">
             <table class="admision-table">
                 <thead>
@@ -57,20 +76,8 @@
         </div>
         <div class="correos-log">
             <h3>Bandeja de correos enviados a pacientes (simulación)</h3>
-            <div class="table-wrapper">
-                <table class="admision-table">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Destinatario</th>
-                            <th>Asunto</th>
-                            <th>Detalle</th>
-                        </tr>
-                    </thead>
-                    <tbody id="correosLogBody">
-                        <!-- Se llena dinámicamente con JS -->
-                    </tbody>
-                </table>
+            <div class="email-inbox" id="correosLogBody">
+                <!-- Se llena dinámicamente con JS -->
             </div>
         </div>
     </div>
